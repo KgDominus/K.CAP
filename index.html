@@ -1,0 +1,875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JAMES — Human Capital Investment Portfolio</title>
+<meta name="description" content="Human Capital Investment Memorandum — James. Track record, holdings, and disclosures.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..700;1,9..144,400..600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+ 
+  /* ============ TOKENS ============ */
+  :root{
+    --ink:#0E1116;
+    --ink-2:#12161D;
+    --ink-3:#181D26;
+    --hair:rgba(231,228,218,0.10);
+    --hair-strong:rgba(231,228,218,0.20);
+    --paper:#F1ECDE;
+    --text:#E8E5DA;
+    --text-dim:#9AA1AC;
+    --text-faint:#6B7280;
+    --gold:#C9A368;
+    --gold-soft:rgba(201,163,104,0.32);
+    --sage:#8FAE86;
+    --sage-soft:rgba(143,174,134,0.28);
+    --pending:#7C828C;
+ 
+    --serif:"Fraunces", Georgia, serif;
+    --sans:"Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+    --mono:"IBM Plex Mono", ui-monospace, monospace;
+ 
+    --rail-w:268px;
+    --maxw:760px;
+  }
+ 
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    *{animation-duration:0.001ms !important; transition-duration:0.001ms !important;}
+  }
+ 
+  body{
+    margin:0;
+    background:var(--ink);
+    color:var(--text);
+    font-family:var(--sans);
+    font-size:16px;
+    line-height:1.65;
+    -webkit-font-smoothing:antialiased;
+  }
+ 
+  a{color:var(--gold); text-decoration:none;}
+  a:hover{text-decoration:underline;}
+  a:focus-visible, button:focus-visible, .navlink:focus-visible{
+    outline:2px solid var(--gold);
+    outline-offset:3px;
+    border-radius:2px;
+  }
+ 
+  .skip-link{
+    position:absolute; left:-999px; top:0;
+    background:var(--gold); color:var(--ink); padding:8px 14px; z-index:200;
+    font-family:var(--mono); font-size:13px;
+  }
+  .skip-link:focus{ left:8px; top:8px; }
+ 
+  h1,h2,h3{ font-family:var(--serif); font-weight:500; margin:0; color:var(--paper); }
+ 
+  .eyebrow{
+    font-family:var(--mono);
+    font-size:11.5px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--gold);
+  }
+ 
+  .mono{ font-family:var(--mono); }
+ 
+  /* ============ LAYOUT SHELL ============ */
+  .shell{ display:flex; min-height:100vh; }
+ 
+  /* ---- Left rail (desktop) ---- */
+  .rail{
+    width:var(--rail-w);
+    flex-shrink:0;
+    position:fixed;
+    top:0; left:0; bottom:0;
+    border-right:1px solid var(--hair);
+    background:var(--ink-2);
+    padding:34px 28px;
+    display:flex;
+    flex-direction:column;
+    overflow-y:auto;
+  }
+  .rail-brand{
+    display:flex; align-items:baseline; gap:8px;
+    margin-bottom:6px;
+  }
+  .rail-brand .mark{ font-family:var(--serif); font-size:22px; color:var(--paper); }
+  .rail-brand .tick{ font-family:var(--mono); font-size:11px; color:var(--text-faint); }
+  .rail-sub{ font-family:var(--mono); font-size:11px; color:var(--text-dim); margin-bottom:34px; line-height:1.6;}
+ 
+  .railnav{ list-style:none; margin:0; padding:0; flex:1; }
+  .railnav li{ margin-bottom:2px; }
+  .navlink{
+    display:flex; gap:10px; align-items:baseline;
+    padding:9px 8px;
+    border-radius:4px;
+    color:var(--text-dim);
+    font-size:13.5px;
+    transition:background 0.2s, color 0.2s;
+  }
+  .navlink:hover{ background:var(--ink-3); color:var(--text); text-decoration:none; }
+  .navlink .num{ font-family:var(--mono); font-size:11px; color:var(--text-faint); width:20px; flex-shrink:0;}
+  .navlink.active{ color:var(--paper); background:var(--ink-3); }
+  .navlink.active .num{ color:var(--gold); }
+ 
+  .rail-foot{
+    margin-top:24px; padding-top:18px; border-top:1px solid var(--hair);
+    font-family:var(--mono); font-size:10.5px; color:var(--text-faint); line-height:1.7;
+  }
+ 
+  /* ---- Mobile top bar ---- */
+  .topbar{
+    display:none;
+    position:sticky; top:0; z-index:100;
+    background:rgba(14,17,22,0.92);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--hair);
+    padding:14px 18px;
+  }
+  .topbar-row{ display:flex; align-items:baseline; justify-content:space-between; gap:10px; margin-bottom:10px;}
+  .topbar .mark{ font-family:var(--serif); font-size:18px; color:var(--paper); }
+  .topbar .tick{ font-family:var(--mono); font-size:10.5px; color:var(--text-faint); }
+  .topnav{
+    display:flex; gap:6px; overflow-x:auto;
+    list-style:none; margin:0; padding:0 0 2px 0;
+    scrollbar-width:none;
+  }
+  .topnav::-webkit-scrollbar{ display:none; }
+  .topnav li{ flex-shrink:0; }
+  .topnav .navlink{ white-space:nowrap; font-size:12px; padding:7px 10px; }
+ 
+  /* ---- Main column ---- */
+  main{
+    margin-left:var(--rail-w);
+    flex:1;
+    min-width:0;
+  }
+ 
+  .section-wrap{
+    max-width:var(--maxw);
+    margin:0 auto;
+    padding:0 32px;
+  }
+ 
+  /* ============ HERO ============ */
+  .hero{
+    position:relative;
+    padding:90px 0 70px;
+    border-bottom:1px solid var(--hair);
+    overflow:hidden;
+  }
+  .hero::before{
+    content:"";
+    position:absolute; inset:0;
+    background-image:
+      linear-gradient(var(--hair) 1px, transparent 1px);
+    background-size: 100% 32px;
+    opacity:0.35;
+    mask-image:linear-gradient(to bottom, black, transparent 85%);
+    pointer-events:none;
+  }
+  .hero-inner{ position:relative; z-index:1; }
+  .hero .eyebrow{ display:block; margin-bottom:22px; }
+  .hero h1{
+    font-size:clamp(42px, 8vw, 68px);
+    letter-spacing:-0.01em;
+    margin-bottom:14px;
+  }
+  .hero-ticker{
+    font-family:var(--mono); font-size:12.5px; color:var(--text-dim);
+    letter-spacing:0.03em;
+    margin-bottom:26px;
+    display:flex; flex-wrap:wrap; gap:6px 0;
+  }
+  .hero-ticker span{ color:var(--gold); }
+  .hero-ticker .sep{ margin:0 10px; color:var(--text-faint); }
+ 
+  .tagline{
+    font-family:var(--serif); font-style:italic; font-size:21px;
+    color:var(--paper); max-width:520px; margin-bottom:34px; line-height:1.5;
+  }
+ 
+  .meta-row{
+    display:flex; flex-wrap:wrap; gap:22px 36px;
+    padding-top:26px; border-top:1px solid var(--hair);
+  }
+  .meta-item .k{ font-family:var(--mono); font-size:10.5px; color:var(--text-faint); letter-spacing:0.1em; text-transform:uppercase; margin-bottom:4px;}
+  .meta-item .v{ font-size:14.5px; color:var(--text); }
+ 
+  .hero-stamp{
+    position:absolute;
+    top:60px; right:-30px;
+    width:170px; height:170px;
+    opacity:0.85;
+  }
+  @media (max-width:880px){ .hero-stamp{ display:none; } }
+ 
+  .hero-cta{ display:flex; gap:14px; margin-top:34px; flex-wrap:wrap; }
+  .btn{
+    font-family:var(--mono); font-size:12.5px; letter-spacing:0.04em;
+    padding:12px 18px; border-radius:3px;
+    border:1px solid var(--hair-strong);
+    color:var(--text);
+    transition:border-color 0.2s, color 0.2s;
+    display:inline-flex; align-items:center; gap:8px;
+  }
+  .btn:hover{ border-color:var(--gold); color:var(--gold); text-decoration:none; }
+  .btn--solid{ background:var(--gold); color:var(--ink); border-color:var(--gold); }
+  .btn--solid:hover{ background:transparent; color:var(--gold); }
+ 
+  /* ============ ITEM SECTIONS ============ */
+  .item{
+    padding:84px 0;
+    border-bottom:1px solid var(--hair);
+  }
+  .item-head{
+    display:flex; align-items:baseline; gap:16px;
+    margin-bottom:38px;
+  }
+  .item-head .itemnum{
+    font-family:var(--mono); font-size:13px; color:var(--gold);
+    border:1px solid var(--gold-soft); border-radius:3px; padding:4px 9px;
+  }
+  .item-head h2{ font-size:30px; }
+ 
+  .lede{ font-size:17.5px; color:var(--text); max-width:620px; margin-bottom:6px; }
+ 
+  .pullquote{
+    font-family:var(--serif); font-style:italic; font-size:26px;
+    color:var(--paper); line-height:1.45;
+    border-left:2px solid var(--gold);
+    padding:6px 0 6px 24px;
+    margin:38px 0;
+    max-width:560px;
+  }
+ 
+  /* reveal animation */
+  .reveal{ opacity:0; transform:translateY(14px); transition:opacity 0.6s ease, transform 0.6s ease; }
+  .reveal.is-visible{ opacity:1; transform:translateY(0); }
+ 
+  /* status badge */
+  .status{
+    display:inline-flex; align-items:center; gap:6px;
+    font-family:var(--mono); font-size:10.5px; letter-spacing:0.06em; text-transform:uppercase;
+    padding:4px 9px; border-radius:20px;
+  }
+  .status .dot{ width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+  .status--active{ color:var(--sage); background:var(--sage-soft); }
+  .status--active .dot{ background:var(--sage); }
+  .status--dev{ color:var(--gold); background:var(--gold-soft); }
+  .status--dev .dot{ background:transparent; border:1.5px solid var(--gold); }
+  .status--pending{ color:var(--pending); background:rgba(124,130,140,0.18); }
+  .status--pending .dot{ background:transparent; border:1.5px dashed var(--pending); }
+ 
+  /* grids */
+  .grid2{ display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-top:28px; }
+  @media (max-width:640px){ .grid2{ grid-template-columns:1fr; } }
+ 
+  .principle{
+    border:1px solid var(--hair); border-radius:6px; padding:18px 20px;
+    background:var(--ink-2);
+  }
+  .principle .mono{ font-size:11px; color:var(--text-faint); margin-bottom:6px; display:block;}
+  .principle p{ margin:0; font-size:15px; color:var(--text); }
+ 
+  /* track record */
+  .subhead{
+    font-family:var(--mono); font-size:11.5px; letter-spacing:0.1em; text-transform:uppercase;
+    color:var(--text-dim); margin:46px 0 16px; padding-bottom:10px; border-bottom:1px solid var(--hair);
+  }
+  .subhead:first-of-type{ margin-top:0; }
+ 
+  .edu-row{ margin-bottom:16px; }
+  .edu-row .line1{ display:flex; justify-content:space-between; gap:12px; flex-wrap:wrap; align-items:baseline;}
+  .edu-row .name{ font-size:16px; color:var(--paper); font-weight:600; }
+  .edu-row .when{ font-family:var(--mono); font-size:12px; color:var(--text-faint); }
+  .edu-row .desc{ font-size:14.5px; color:var(--text-dim); margin-top:4px; }
+ 
+  .card{
+    border:1px solid var(--hair); border-radius:8px;
+    background:var(--ink-2);
+    padding:22px 24px;
+    margin-bottom:16px;
+  }
+  .card-top{ display:flex; justify-content:space-between; align-items:flex-start; gap:14px; margin-bottom:10px; flex-wrap:wrap;}
+  .card-title{ font-family:var(--serif); font-size:19px; color:var(--paper); }
+  .card-role{ font-family:var(--mono); font-size:11.5px; color:var(--gold); margin-top:3px; }
+  .card-desc{ font-size:14.5px; color:var(--text-dim); margin:10px 0 14px; max-width:540px;}
+  .card-foot{ display:flex; justify-content:space-between; align-items:center; gap:12px; flex-wrap:wrap; }
+  .card-link{ font-family:var(--mono); font-size:12px; }
+  .card-date{ font-family:var(--mono); font-size:11px; color:var(--text-faint); }
+ 
+  /* holdings checklist */
+  .checklist{ margin-top:18px; border:1px solid var(--hair); border-radius:8px; overflow:hidden; }
+  .checklist-head{
+    padding:14px 20px; background:var(--ink-2); border-bottom:1px solid var(--hair);
+    display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;
+  }
+  .checklist-head .t{ font-family:var(--serif); font-size:16.5px; color:var(--paper); }
+  .check-row{
+    display:flex; justify-content:space-between; align-items:center; gap:12px;
+    padding:13px 20px; border-bottom:1px solid var(--hair); font-size:14px;
+  }
+  .check-row:last-child{ border-bottom:none; }
+  .check-row .label{ color:var(--text); }
+  .check-row .tag{ font-family:var(--mono); font-size:10.5px; color:var(--text-faint); text-transform:uppercase; letter-spacing:0.06em;}
+ 
+  /* competency grid */
+  .comp-grid{ display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:10px; }
+  @media (max-width:640px){ .comp-grid{ grid-template-columns:1fr; } }
+  .comp-card{ border:1px solid var(--hair); border-radius:8px; padding:18px 20px; }
+  .comp-card h3{ font-size:14px; font-family:var(--mono); text-transform:uppercase; letter-spacing:0.06em; color:var(--gold); font-weight:600; margin-bottom:12px;}
+  .chips{ display:flex; flex-wrap:wrap; gap:7px; }
+  .chip{
+    font-size:12.5px; padding:6px 11px; border-radius:20px;
+    border:1px solid var(--hair-strong); color:var(--text-dim);
+  }
+ 
+  /* disclosure list */
+  .disclosure-banner{
+    font-family:var(--mono); font-size:12.5px; color:var(--text-dim);
+    border:1px dashed var(--hair-strong); border-radius:6px;
+    padding:14px 18px; margin-bottom:24px; line-height:1.7;
+  }
+  .disclosure-list{ list-style:none; margin:0; padding:0; }
+  .disclosure-list li{
+    display:flex; gap:14px; padding:16px 0; border-top:1px solid var(--hair);
+    font-size:14.5px; color:var(--text-dim);
+  }
+  .disclosure-list li .dnum{ font-family:var(--mono); color:var(--text-faint); flex-shrink:0; font-size:12px; padding-top:2px;}
+ 
+  /* references */
+  .ref-card{
+    border:1px dashed var(--hair-strong); border-radius:8px;
+    padding:22px; margin-bottom:14px;
+    display:flex; flex-direction:column; gap:8px;
+  }
+  .ref-card .tag{ font-family:var(--mono); font-size:10.5px; color:var(--pending); letter-spacing:0.08em; text-transform:uppercase;}
+  .ref-card .placeholder-text{ color:var(--text-faint); font-size:14px; font-style:italic; }
+ 
+  /* closing / contact */
+  .closing{ padding:90px 0 60px; }
+  .closing h2{ font-size:32px; max-width:520px; margin-bottom:18px; }
+  .closing p{ color:var(--text-dim); max-width:480px; margin-bottom:30px; font-size:15.5px;}
+  .contact-grid{ display:flex; gap:14px; flex-wrap:wrap; margin-bottom:40px;}
+ 
+  footer{
+    padding:28px 0 60px;
+    font-family:var(--mono); font-size:11px; color:var(--text-faint);
+    line-height:1.8;
+    border-top:1px solid var(--hair);
+  }
+ 
+  /* ============ RESPONSIVE ============ */
+  @media (max-width:1024px){
+    .rail{ display:none; }
+    .topbar{ display:block; }
+    main{ margin-left:0; }
+    .section-wrap{ padding:0 22px; }
+    .item{ padding:60px 0; }
+    .hero{ padding:50px 0 50px; }
+  }
+</style>
+</head>
+<body>
+ 
+<a href="#thesis" class="skip-link">Skip to content</a>
+ 
+<!-- ============================================================
+  CONTENT CHECKLIST — search for "TODO" to find every spot
+  that needs real info from James before this goes live:
+    - Contact email / LinkedIn / GitHub / podcast links (Closing section)
+    - STADIO qualification name + expected completion date (Item 2)
+    - Engagement dates for Power Solar Tint + CozyCare (Item 2)
+    - Live link for Power Solar Tint site (Item 2)
+    - NetshiR Holdings: role/title, sector, and link (Item 3)
+    - Confirm scope of Honeybee partnership for public description (Item 3)
+    - Regulatory pathway status: update if CIPC/CSD/etc. progresses (Item 3)
+    - References: 3 placeholder cards ready in Item 7 — replace with
+      name, role/relationship, and a short quote when available
+    - Screenshots: optional <img> hooks left as comments in case
+      cards if James wants visual proof instead of just links
+============================================================ -->
+ 
+<div class="shell">
+ 
+  <!-- ============ DESKTOP RAIL ============ -->
+  <header class="rail" aria-label="Section navigation">
+    <div class="rail-brand">
+      <span class="mark">K.CAP </span>
+      <span class="tick">· HCIP-01</span>
+    </div>
+    <div class="rail-sub">Human Capital<br>Investment Memorandum</div>
+ 
+    <nav>
+      <ul class="railnav" id="railnav">
+        <li><a class="navlink" href="#thesis"><span class="num">01</span> Investment Thesis</a></li>
+        <li><a class="navlink" href="#track-record"><span class="num">02</span> Track Record</a></li>
+        <li><a class="navlink" href="#holdings"><span class="num">03</span> Portfolio Holdings</a></li>
+        <li><a class="navlink" href="#capital"><span class="num">04</span> Capital Allocation</a></li>
+        <li><a class="navlink" href="#impact"><span class="num">05</span> Impact Mandate</a></li>
+        <li><a class="navlink" href="#disclosures"><span class="num">06</span> Disclosures</a></li>
+        <li><a class="navlink" href="#references"><span class="num">07</span> References</a></li>
+        <li><a class="navlink" href="#contact"><span class="num">→</span> Inquire</a></li>
+      </ul>
+    </nav>
+ 
+    <div class="rail-foot">
+      DOMICILE — Gauteng, ZA<br>
+      CLASS — Human Capital / Nascent
+    </div>
+  </header>
+ 
+  <!-- ============ MOBILE TOP BAR ============ -->
+  <div class="topbar">
+    <div class="topbar-row">
+      <span class="mark">K.CAP <span class="tick">· HCIP-01</span></span>
+    </div>
+    <ul class="topnav" id="topnav">
+      <li><a class="navlink" href="#thesis">01 Thesis</a></li>
+      <li><a class="navlink" href="#track-record">02 Track Record</a></li>
+      <li><a class="navlink" href="#holdings">03 Holdings</a></li>
+      <li><a class="navlink" href="#capital">04 Capital</a></li>
+      <li><a class="navlink" href="#impact">05 Impact</a></li>
+      <li><a class="navlink" href="#disclosures">06 Disclosures</a></li>
+      <li><a class="navlink" href="#references">07 References</a></li>
+      <li><a class="navlink" href="#contact">→ Inquire</a></li>
+    </ul>
+  </div>
+ 
+  <main>
+ 
+    <!-- ============ HERO ============ -->
+    <section class="hero">
+      <svg class="hero-stamp" viewBox="0 0 200 200" aria-hidden="true">
+        <circle cx="100" cy="100" r="92" fill="none" stroke="var(--gold)" stroke-width="1" opacity="0.7"/>
+        <circle cx="100" cy="100" r="78" fill="none" stroke="var(--gold)" stroke-width="1" opacity="0.45"/>
+        <path id="stamptext" d="M 100,178 A 78,78 0 1 1 99,178" fill="none"/>
+        <text font-family="IBM Plex Mono" font-size="9.5" letter-spacing="2" fill="var(--gold)" opacity="0.85">
+        </text>
+        <text x="100" y="95" text-anchor="middle" font-family="Fraunces" font-style="italic" font-size="15" fill="var(--paper)" opacity="0.9">est.</text>
+        <text x="100" y="118" text-anchor="middle" font-family="Fraunces" font-size="22" fill="var(--gold)">2024</text>
+      </svg>
+ 
+      <div class="section-wrap hero-inner">
+        <span class="eyebrow">Confidential — Human Capital Investment Memorandum</span>
+        <h1>Kgothatso James Peter Junior Mootane</h1>
+        <div class="hero-ticker mono">
+         <span>K.CAP </span><span class="sep">·</span> <span>Human Capital / Frontier</span><span class="sep">·</span><span>Nascent</span>
+        </div>
+        <p class="tagline">Building systems. Creating opportunity. Investing in generational impact.</p>
+ 
+        <div class="hero-cta">
+          <a class="btn btn--solid" href="#thesis">Read the Thesis ↓</a>
+          <a class="btn" href="#disclosures">View Disclosures</a>
+        </div>
+ 
+        <div class="meta-row">
+          <div class="meta-item"><div class="k">Domicile</div><div class="v">Johannesburg Gauteng ZA</div></div>
+          <div class="meta-item"><div class="k">Currently</div><div class="v">Information Technology Web Dev Student</div></div>
+          <div class="meta-item"><div class="k">Holding Period</div><div class="v">Long term</div></div>
+          <div class="meta-item"><div class="k">Status</div><div class="v">Actively compounding</div></div>
+        </div>
+      </div>
+    </section>
+ 
+    <!-- ============ ITEM 1 — THESIS ============ -->
+    <section class="item" id="thesis">
+      <div class="section-wrap">
+        <div class="item-head reveal">
+          <span class="itemnum">01</span>
+          <h2>Investment Thesis</h2>
+        </div>
+ 
+        <p class="lede reveal">
+          I am an emerging multidisciplinary entrepreneur and information technology professional building
+          toward integrated, long horizon enterprise work that treats profit as a byproduct of
+          measurable social, economic, and institutional value. Rather than
+          chasing isolated achievments, I am deliberately building the technical, managerial, and strategic
+          range needed to one day lead enterprise across technology, energy, agriculture, and
+          community infrastructure.
+        </p>
+ 
+        <blockquote class="pullquote reveal">
+          “Build institutions that continue solving problems long after their founder is gone.”
+        </blockquote>
+ 
+        <p class="lede reveal" style="margin-top:8px;">
+          The underlying thesis: human capital is the world's most reliably appreciating asset.
+          Investment in people, education, and institutional capability compounds in a way that
+          once-off transactions don't.
+        </p>
+ 
+        <div class="grid2 reveal">
+          <div class="principle">
+            <span class="mono">PRINCIPLE</span>
+            <p>Long-term thinking over short-term success</p>
+          </div>
+          <div class="principle">
+            <span class="mono">PRINCIPLE</span>
+            <p>Systems over isolated solutions</p>
+          </div>
+          <div class="principle">
+            <span class="mono">PRINCIPLE</span>
+            <p>Service before recognition</p>
+          </div>
+          <div class="principle">
+            <span class="mono">PRINCIPLE</span>
+            <p>Continuous improvement through disciplined execution</p>
+          </div>
+        </div>
+      </div>
+    </section>
+ 
+    <!-- ============ ITEM 2 — TRACK RECORD ============ -->
+    <section class="item" id="track-record">
+      <div class="section-wrap">
+        <div class="item-head reveal">
+          <span class="itemnum">02</span>
+          <h2>Track Record</h2>
+        </div>
+        <p class="lede reveal">The verifiable column: education, a flagship academic build, and a running freelance practice, each with a live link, not just a claim.</p>
+ 
+        <div class="subhead reveal">Education</div>
+        <div class="edu-row reveal">
+          <div class="line1">
+            <!-- TODO: confirm full qualification name + expected completion date -->
+            <span class="name">STADIO BSc Information Technolgy in Web Development </span>
+            <span class="when">In progress · 2025 - 2027</span>
+          </div>
+          <div class="desc">Coursework in applied web systems, currently in active submission.</div>
+        </div>
+        <div class="edu-row reveal">
+          <div class="line1">
+            <span class="name">SomaShare</span>
+            <span class="when">Academic capstone build</span>
+          </div>
+          <div class="desc">A Blazor / ASP.NET Core textbook marketplace built for African university students, taken through to final submission.</div>
+        </div>
+ 
+        <div class="subhead reveal">Independent Practices — Web Design &amp; Development</div>
+        <p class="lede reveal" style="font-size:15px; margin-bottom:18px;">A recurring freelance practice: full design, build, and deployment of production sites for South African small businesses.</p>
+ 
+        <div class="card reveal">
+          <div class="card-top">
+            <div>
+              <div class="card-title">Power Solar Tint</div>
+              <div class="card-role">Lead Designer &amp; Developer (Under construction)</div>
+            </div>
+            <span class="status status--active"><span class="dot"></span>Active — Live</span>
+          </div>
+          <div class="card-desc">Full rebuild for a Johannesburg based solar tinting business, warm visual identity, photo gallery with lightbox, real client photography integrated throughout.</div>
+          <div class="card-foot">
+            <a class="card-link mono" href="https://kgdominus.github.io/Power-Solar-Tint/" target="_blank" rel="noopener">View live site →</a>
+            <span class="card-date mono"><!-- TODO: engagement date -->Engagement date: TBC</span>
+          </div>
+        </div>
+ 
+        <div class="card reveal">
+          <div class="card-top">
+            <div>
+              <div class="card-title">CozyCare Cleaners</div>
+              <div class="card-role">Digital Architecture &amp; Operations Partner</div>
+            </div>
+            <span class="status status--active"><span class="dot"></span>Active — Live</span>
+          </div>
+          <div class="card-desc">Designed and built the company's full digital presence and brand for this Pretoria/Centurion carpet &amp; upholstery cleaning business; provides ongoing support on logistics and business-efficiency improvements.</div>
+          <div class="card-foot">
+            <a class="card-link mono" href="https://cozycarecleaners.github.io/C.C.C/" target="_blank" rel="noopener">View live site →</a>
+            <span class="card-date mono"><!-- TODO: engagement date -->Engagement date: TBC</span>
+          </div>
+        </div>
+        <!-- Optional: if James wants visual proof rather than just a link, add
+             <img src="..." alt="..."> inside a .card-desc here for each case study. -->
+      </div>
+    </section>
+ 
+    <!-- ============ ITEM 3 — PORTFOLIO HOLDINGS ============ -->
+    <section class="item" id="holdings">
+      <div class="section-wrap">
+        <div class="item-head reveal">
+          <span class="itemnum">03</span>
+          <h2>Portfolio Holdings</h2>
+        </div>
+        <p class="lede reveal">
+          I treats procurement and enterprise development as long-term relationships, not
+          transactions, prioritising transparent governance, regulatory compliance, and skills
+          transfer over one-off achievments. The objective is to become a trusted delivery partner capable
+          of executing work that creates measurable economic and social return.
+        </p>
+ 
+        <div class="card reveal" style="margin-top:28px;">
+          <div class="card-top">
+            <div>
+              <div class="card-title">Honeybee Cleaning Enterprise</div>
+              <div class="card-role">Operating Partner · since 2025</div>
+            </div>
+            <span class="status status--active"><span class="dot"></span>Active</span>
+          </div>
+          <!-- TODO: confirm exact scope of the partnership for public description -->
+          <div class="card-desc">Operational and business  efficiency partner to an independent cleaning services enterprise.</div>
+          <div class="card-foot">
+            <a class="card-link mono" href="http://honeybeecleaningenterprise.co.za/" target="_blank" rel="noopener">View site →</a>
+          </div>
+        </div>
+ 
+        <div class="card reveal">
+          <div class="card-top">
+            <div>
+              <div class="card-title">CozyCare Cleaners</div>
+              <div class="card-role">Digital Architecture &amp; Operations Partner</div>
+            </div>
+            <span class="status status--active"><span class="dot"></span>Active</span>
+          </div>
+          <div class="card-desc">See Item 2 — Track Record for full case study.</div>
+          <div class="card-foot">
+            <a class="card-link mono" href="https://cozycarecleaners.github.io/C.C.C/" target="_blank" rel="noopener">View live site →</a>
+          </div>
+        </div>
+ 
+        <div class="card reveal">
+          <div class="card-top">
+            <div>
+              <!-- TODO: add NetshiR Holdings role/title, sector, and link once confirmed -->
+              <div class="card-title">NetshiR Holdings</div>
+              <div class="card-role">Role pending disclosure</div>
+            </div>
+            <span class="status status--pending"><span class="dot"></span>Pending Disclosure</span>
+          </div>
+          <div class="card-desc">Further detail to follow once structure and role are finalised.</div>
+        </div>
+ 
+        <div class="checklist reveal">
+          <div class="checklist-head">
+            <span class="t">Regulatory Pathway — Exploratory</span>
+            <span class="status status--dev"><span class="dot"></span>In Development</span>
+          </div>
+          <div class="check-row"><span class="label">CIPC Registration</span><span class="tag">Under Review</span></div>
+          <div class="check-row"><span class="label">CSD Listing</span><span class="tag">Under Review</span></div>
+          <div class="check-row"><span class="label">B-BBEE Status</span><span class="tag">Under Review</span></div>
+          <div class="check-row"><span class="label">CIDB Grading</span><span class="tag">Under Review</span></div>
+          <div class="check-row"><span class="label">eTenders Profile</span><span class="tag">Under Review</span></div>
+        </div>
+      </div>
+    </section>
+ 
+    <!-- ============ ITEM 4 — CAPITAL ALLOCATION ============ -->
+    <section class="item" id="capital">
+      <div class="section-wrap">
+        <div class="item-head reveal">
+          <span class="itemnum">04</span>
+          <h2>Human Capital Allocation</h2>
+        </div>
+        <p class="lede reveal">Where current development effort is concentrated.</p>
+ 
+        <div class="comp-grid reveal">
+          <div class="comp-card">
+            <h3>Strategic Thinking</h3>
+            <div class="chips">
+              <span class="chip">Long-range planning</span>
+              <span class="chip">Systems analysis</span>
+              <span class="chip">Business model design</span>
+              <span class="chip">Enterprise architecture</span>
+              <span class="chip">Organisational planning</span>
+            </div>
+          </div>
+          <div class="comp-card">
+            <h3>Technology</h3>
+            <div class="chips">
+              <span class="chip">Web design &amp; development</span>
+              <span class="chip">Information systems</span>
+              <span class="chip">Process automation</span>
+              <span class="chip">Technology integration</span>
+              <span class="chip">Digital systems</span>
+            </div>
+          </div>
+          <div class="comp-card">
+            <h3>Business Development</h3>
+            <div class="chips">
+              <span class="chip">Opportunity identification</span>
+              <span class="chip">Business planning</span>
+              <span class="chip">Market research</span>
+              <span class="chip">Operational thinking</span>
+              <span class="chip">Growth strategy</span>
+            </div>
+          </div>
+          <div class="comp-card">
+            <h3>Leadership</h3>
+            <div class="chips">
+              <span class="chip">Accountability</span>
+              <span class="chip">Strategic delegation</span>
+              <span class="chip">Decision-making</span>
+              <span class="chip">Conflict management</span>
+              <span class="chip">Vision alignment</span>
+            </div>
+          </div>
+          <div class="comp-card" style="grid-column:1/-1;">
+            <h3>Personal Effectiveness</h3>
+            <div class="chips">
+              <span class="chip">High learning agility</span>
+              <span class="chip">Structured thinking</span>
+              <span class="chip">Adaptability</span>
+              <span class="chip">Self-directed learning</span>
+              <span class="chip">Professional discipline</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+ 
+    <!-- ============ ITEM 5 — IMPACT MANDATE ============ -->
+    <section class="item" id="impact">
+      <div class="section-wrap">
+        <div class="item-head reveal">
+          <span class="itemnum">05</span>
+          <h2>Social Impact Mandate</h2>
+        </div>
+ 
+        <div class="disclosure-banner reveal">
+          Forward looking statement, this section reflects stated intent and active development,
+          not completed engagements. Verification available on request. See Item 06 for full disclosure.
+        </div>
+ 
+        <p class="lede reveal">
+          I view philanthropy as a permanent operating function rather than an occasional
+          activity, long term mechanisms that keep creating value regardless of economic cycles.
+          Current focus areas include:
+        </p>
+ 
+        <div class="chips reveal" style="margin-top:18px;">
+          <span class="chip">Education access &amp; funding</span>
+          <span class="chip">Digital literacy &amp; inclusion</span>
+          <span class="chip">Youth entrepreneurship</span>
+          <span class="chip">Rural healthcare access</span>
+          <span class="chip">Agricultural empowerment</span>
+          <span class="chip">Community technology centres</span>
+          <span class="chip">Skills development</span>
+          <span class="chip">Employment creation</span>
+        </div>
+      </div>
+    </section>
+ 
+    <!-- ============ ITEM 6 — DISCLOSURES (signature section) ============ -->
+    <section class="item" id="disclosures">
+      <div class="section-wrap">
+        <div class="item-head reveal">
+          <span class="itemnum">06</span>
+          <h2>Risk Factors &amp; Disclosures</h2>
+        </div>
+        <p class="lede reveal">In the interest of accurate disclosure, this memorandum notes the following:</p>
+ 
+        <ul class="disclosure-list reveal">
+          <li><span class="dnum">6.1</span><span>Statements in Item 05 regarding social impact and philanthropic initiatives are forward-looking and reflect intent currently in development, not completed engagements.</span></li>
+          <li><span class="dnum">6.2</span><span>The Item 03 holding "NetshiR Holdings" is pending full disclosure of role, structure, and registration details.</span></li>
+          <li><span class="dnum">6.3</span><span>Engagement dates for case studies in Item 02 are pending confirmation and will be updated as finalised.</span></li>
+          <li><span class="dnum">6.4</span><span>Regulatory filings referenced in Item 03 (CIPC, CSD, B-BBEE, CIDB, eTenders) reflect an exploratory pathway, not completed registration.</span></li>
+          <li><span class="dnum">6.5</span><span>Third-party references in Item 07 are reserved placeholders and will be incorporated as they are received.</span></li>
+        </ul>
+        <p class="lede reveal" style="margin-top:24px; font-size:14px; color:var(--text-faint);">This memorandum will be revised as the above items are confirmed.</p>
+      </div>
+    </section>
+ 
+    <!-- ============ ITEM 7 — REFERENCES ============ -->
+    <section class="item" id="references">
+      <div class="section-wrap">
+        <div class="item-head reveal">
+          <span class="itemnum">07</span>
+          <h2>References &amp; Endorsements</h2>
+        </div>
+        <p class="lede reveal">Reserved for client and collaborator references.</p>
+ 
+        <!-- TODO: replace each block below with —
+             <span class="tag">Reference 01</span>
+             <p>"Quote here."</p>
+             <p class="mono" style="font-size:12px;color:var(--text-dim)">— Name, Role/Relationship</p>
+        -->
+        <div class="ref-card reveal">
+          <span class="tag">Reference 01 — Pending</span>
+          <p class="placeholder-text">Space reserved for a client or collaborator reference.</p>
+        </div>
+        <div class="ref-card reveal">
+          <span class="tag">Reference 02 — Pending</span>
+          <p class="placeholder-text">Space reserved for a client or collaborator reference.</p>
+        </div>
+        <div class="ref-card reveal">
+          <span class="tag">Reference 03 — Pending</span>
+          <p class="placeholder-text">Space reserved for a client or collaborator reference.</p>
+        </div>
+      </div>
+    </section>
+ 
+    <!-- ============ CLOSING / CONTACT ============ -->
+    <section class="closing" id="contact">
+      <div class="section-wrap">
+        <span class="eyebrow reveal">Initiate Inquiry</span>
+        <h2 class="reveal">Open to conversations with mentors, collaborators, and early-stage partners.</h2>
+        <p class="reveal">This memorandum will continue to be revised as holdings, dates, and references are confirmed.</p>
+ 
+        <div class="contact-grid reveal">
+          <!-- TODO: replace href values with real contact details -->
+          <a class="btn" href="https://wa.me/message/BPACJLBO4LDIA1" target="_blank" rel="noopener">Whatsapp</a>
+          <a class="btn" href="mailto:Kgothatsomootane616@gmail.com">Email</a>
+          <a class="btn" href="https://www.instagram.com/james.kg_?igsh=MWUzMHIzaWwzNjJrZw%3D%3D&utm_source=qr" target="_blank" rel="noopener">Instagram</a>
+          <a class="btn" href="https://www.linkedin.com/in/kgothatso-mootane-96004a345?utm_source=share_via&utm_content=profile&utm_medium=member_ios" target="_blank" rel="noopener">LinkedIn</a>
+          <a class="btn" href="https://github.com/KgDominus" target="_blank" rel="noopener">GitHub</a>
+        </div>
+      </div>
+ 
+      <div class="section-wrap">
+        <footer>
+          This document is a personal portfolio and development record — not a regulated financial
+          instrument or a solicitation of investment.<br>
+          Johannesburg, South Africa.
+        </footer>
+      </div>
+    </section>
+ 
+  </main>
+</div>
+ 
+<script>
+  // Smooth-scroll handling is covered by CSS scroll-behavior; this just
+  // keeps the active nav state in sync as the user scrolls.
+  (function(){
+    var sections = document.querySelectorAll('main section[id]');
+    var navLinks = document.querySelectorAll('.navlink');
+ 
+    function setActive(id){
+      navLinks.forEach(function(link){
+        var match = link.getAttribute('href') === '#' + id;
+        link.classList.toggle('active', match);
+      });
+    }
+ 
+    if ('IntersectionObserver' in window){
+      var spy = new IntersectionObserver(function(entries){
+        entries.forEach(function(entry){
+          if (entry.isIntersecting){ setActive(entry.target.id); }
+        });
+      }, { rootMargin: '-45% 0px -45% 0px', threshold: 0 });
+      sections.forEach(function(s){ spy.observe(s); });
+ 
+      var reveals = document.querySelectorAll('.reveal');
+      var ro = new IntersectionObserver(function(entries, obs){
+        entries.forEach(function(entry){
+          if (entry.isIntersecting){
+            entry.target.classList.add('is-visible');
+            obs.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+      reveals.forEach(function(el){ ro.observe(el); });
+    } else {
+      document.querySelectorAll('.reveal').forEach(function(el){ el.classList.add('is-visible'); });
+    }
+  })();
+</script>
+ 
+</body>
+</html>
